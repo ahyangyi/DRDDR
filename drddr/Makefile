@@ -1,7 +1,4 @@
 obj-m += drddr.o
-obj-m += caferace.o
-obj-m += test.o
-obj-m += timeout.o
 
 drddr-objs := drddr-main.o drddr-utils.o drddr-wp.o drddr-bp.o drddr-mon.o disassem.o
 
