@@ -1,0 +1,4 @@
+* Kernel paravirtualization should be turned off: this affects the structure of interruption handlers.
+  This probably will never get fixed, because I think the static analyser should be able to do this for us.
+* "Export all symbols to Kallsyms" should be enabled. We currently rely on this. Hopefully, in the future we will use the static anaylser to do this.
+* Some option (I'm not sure) will forbid the use of the debug registers. Beware.
