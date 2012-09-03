@@ -1,4 +1,5 @@
 #!/bin/bash
+make
 objdump -d /lib/modules/$(uname -r)/build/vmlinux > vmlinux.objd
 objdump -d /lib/modules/$(uname -r)/build/fs/built-in.o > fs.objd
 ./simple -i fs.objd -O -o fs.regex
