@@ -450,9 +450,6 @@ static ssize_t write_address(struct file *file, const char __user *buf,
 {
     printk ("write_address() called, count=%lu, \n", (unsigned long)count);
 
-//    if(count > N_ADDRESS * sizeof(size_t))
-//        return -EINVAL;
-
     return simple_write_to_buffer(address, N_ADDRESS * sizeof(size_t), ppos,
         buf, count);
 }
@@ -463,9 +460,6 @@ static ssize_t read_monitor(struct file *file, char __user *userbuf,
     if (*ppos == 0)
         mon_update ();
 
-//    printk ("read_monitor() called! with %d %d\n", (int)count, (int)*ppos);
-
-//    return simple_read_from_buffer(mon_buf, MON_BUF_SIZE, ppos, userbuf, count);
     return simple_read_from_buffer(userbuf, count, ppos, mon_buf, MON_BUF_SIZE);
 }
 
