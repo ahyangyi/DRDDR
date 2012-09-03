@@ -1,0 +1,3 @@
+This small project will do the following things:
+* Let the user supply some regular expressions, and then analyze an objdump file to find all potential global memory accesses in matching functions.
+* Running the example.sh will generate you 
