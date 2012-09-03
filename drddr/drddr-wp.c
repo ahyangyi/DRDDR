@@ -61,7 +61,6 @@ void wp_set_to_register(void * _watches)
                                 :
                                 : "r" (watches->dr3)    );
 
-    /* set ctrl */
     __asm__ __volatile__ (  "movq %0,%%dr7  \n\t"
                             :
                             : "r" (watches->ctrl)   );
@@ -75,15 +74,9 @@ void set_dr (void)
 #define TRAP_GLOBAL_DR1 (1<<3)
 #define TRAP_GLOBAL_DR2 (1<<5)
 #define TRAP_GLOBAL_DR3 (1<<7)
-
-/* exact instruction detection not supported on P6 */
 #define TRAP_LE         (1<<8)
 #define TRAP_GE         (1<<9)
-
-/* Global Detect flag */
 #define GD_ACCESS       (1<<13)
-
-/* 2 bits R/W and 2 bits len from these offsets */
 #define DR0_RW      16
 #define DR0_LEN     18
 #define DR1_RW      20
@@ -127,15 +120,6 @@ void set_dr (void)
         w.ctrl |= (wp_len_to_flag (wp_length[3]) << DR3_LEN);
     } else w.dr3 = 0;
 
-/*
-   printk ("The watch to set: %08x%08x %08x%08x %08x%08x %08x%08x CTRL %08x%08x\n",
-            (int)(w.dr0 >> 32), (int)w.dr0,
-            (int)(w.dr1 >> 32), (int)w.dr1,
-            (int)(w.dr2 >> 32), (int)w.dr2,
-            (int)(w.dr3 >> 32), (int)w.dr3,
-            (int)(w.ctrl >> 32), (int)w.ctrl
-            );
-*/  
    on_each_cpu(
 	wp_set_to_register
 	, &w, 1);

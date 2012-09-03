@@ -15,7 +15,7 @@
  *   Avi Kivity <avi@qumranet.com>
  *   Yaniv Kamay <yaniv@qumranet.com>
  *
- * Copyright (C) 2011 Ahyangyi
+ * Copyright (C) 2011
  *
  *   Yi Yang <ahyangyi@gmail.com>
  *

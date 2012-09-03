@@ -447,9 +447,6 @@ static ssize_t write_address(struct file *file, const char __user *buf,
 {
     printk ("write_address() called, count=%lu, \n", (unsigned long)count);
 
-//    if(count > N_ADDRESS * sizeof(size_t))
-//        return -EINVAL;
-
     return simple_write_to_buffer(address, N_ADDRESS * sizeof(size_t), ppos,
         buf, count);
 }
