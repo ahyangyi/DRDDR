@@ -88,7 +88,7 @@ void param (void)
 
     if (sscanf (cmd + 6, "%d", &x) != 1)
     {
-        fprintf (stderr, "Param needs a param.\n");
+        fprintf (stderr, "\"Param\" command needs a parameter.\n");
         return;
     }
 
@@ -118,6 +118,27 @@ void stop (void)
     fclose(cmd);
 }
 
+void status ()
+{
+    FILE *f;
+
+    f = fopen ("/sys/kernel/debug/drddr/monitor", "r");
+    {
+        char c;
+        while (fscanf (f, "%c", &c) != EOF)
+            printf ("%c", c);
+    }
+
+    fclose(f);
+}
+
+void help ()
+{
+    printf ("Available commands:\n"
+            "start|end|exit|load [filename]|param <param>|status|help\n"
+            "\n");
+}
+
 int main ()
 {
     printf(">");
@@ -126,15 +147,15 @@ int main ()
         while (cmd[0] != '\0' && cmd[strlen(cmd)-1] < ' ')
             cmd[strlen(cmd)-1] = 0x0;
 
-        if (strcmp(cmd, "start") == 0)
+        if (strstr(cmd, "start") == cmd)
         {
             start ();
         }
-        else if (strcmp(cmd, "end") == 0)
+        else if (strstr(cmd, "end") == cmd)
         {
             stop ();
         }
-        else if (strcmp(cmd, "exit") == 0)
+        else if (strstr(cmd, "exit") == cmd)
         {
             return 0;
         }
@@ -145,6 +166,14 @@ int main ()
         else if (strstr(cmd, "param") == cmd)
         {
             param ();
+        }
+        else if (strstr(cmd, "status") == cmd)
+        {
+            status ();
+        }
+        else if (strstr(cmd, "help") == cmd)
+        {
+            help ();
         }
         else
         {

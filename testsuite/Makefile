@@ -1,4 +1,4 @@
-obj-m += caferace.o
+obj-m += rw.o ww.o
 
 .PHONY: all, test, clean
 
