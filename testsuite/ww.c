@@ -9,84 +9,84 @@
 #include <linux/delay.h>
 #include <linux/kallsyms.h>
 
-static struct task_struct *writer, *reader;
+static struct task_struct *write1r, *write2er;
 
-int write_racer (void *vcurrent_cafe)
+int write1_racer (void *vptr)
 {
-	int flavour = 0xab8acada;
-	volatile int *current_cafe = (volatile int *) vcurrent_cafe;
+	int generator = 0xab8acada;
+	volatile int *ptr = (volatile int *) vptr;
 	int i;
 
-	printk ("** WRITER ADDRESS: %016Lx. **\n", (0x12ll + ((long long) &&__write)));
+	printk ("** WRITER1 ADDRESS: %016Lx. **\n", (0x12ll + ((long long) &&__write1)));
 	
 
 	while(1)
 	{
-		for (i = 0; i < (unsigned int)(flavour) % 32; i ++)
+		for (i = 0; i < (unsigned int)(generator) % 32; i ++)
 		{
 			msleep(100);
 			if (kthread_should_stop()) goto ouch;
 		}
 
-		printk ("The current coffee becomes type %08x\n", flavour);
+		printk ("Write %08x\n", generator);
 
-__write:
-		*current_cafe = flavour;
+__write1:
+		*ptr = generator;
 
-		flavour = (flavour ^ 0xbabeface) * (flavour ^ 0xfadedcab);
+		generator = (generator ^ 0xbabeface) * (generator ^ 0xfadedcab);
 	}
 ouch:
-	printk (KERN_INFO "Welcome again!\n");
+	printk (KERN_INFO "Writer1 exits\n");
 	return 0;
 }
 
-int read_racer (void *vcurrent_cafe)
+int write2_racer (void *vptr)
 {
-	volatile int *current_cafe = (volatile int *) vcurrent_cafe;
+	int generator = 0xcaca0bea;
+	volatile int *ptr = (volatile int *) vptr;
 	int i;
-	int cafe_type;
 
-    printk ("** WRITER ADDRESS: %016Lx. **\n", ((long long) &&__read));
+    printk ("** WRITER2 ADDRESS: %016Lx. **\n", 0x12ll + ((long long) &&__write2));
 
 	while(1)
 	{
-		for (i = 0; i < 16; i ++)
+		for (i = 0; i < (unsigned int)(generator) % 32; i ++)
 		{
-			msleep(80);
+			msleep(79);
 			if (kthread_should_stop()) goto ouch2;
 		}
 
-__read:
-		cafe_type = *current_cafe;
+__write2:
+		*ptr = generator;
 
-		printk ("The current coffee tastes like type %08x\n", cafe_type);
+		generator = (generator ^ 0xbabeface) * (generator ^ 0xfadedcab);
 	}
 
 ouch2:
-	printk (KERN_INFO "Any more coffee for me to taste?\n");
+	printk (KERN_INFO "Writer2 exits\n");
 	return 0;
 }
 
-static int __init wwrace_init(void)
+static int __init rwrace_init(void)
 {
-	static volatile int current_cafe = 0;
+	static volatile int ptr = 0;
 
-    printk ("** DATA ADDRESS %16Lx **\n", (int64_t)(&current_cafe));
+    printk ("** DATA ADDRESS %16Lx **\n", (int64_t)(&ptr));
 
-	writer = kthread_run(write_racer, (void *)&current_cafe,  "CAFE_MACHINE");
-	reader = kthread_run(read_racer, (void *)&current_cafe,  "CAFE_TESTER");
+	write1r = kthread_run(write1_racer, (void *)&ptr,  "WRITER");
+	write2er = kthread_run(write2_racer, (void *)&ptr,  "READER");
 
 	return 0;
 }
 
-static void __exit wwrace_exit(void)
+static void __exit rwrace_exit(void)
 {
-	kthread_stop(writer);
-	kthread_stop(reader);
+	kthread_stop(write1r);
+	kthread_stop(write2er);
 }
 
-module_init(wwrace_init);
-module_exit(wwrace_exit);
+module_init(rwrace_init);
+module_exit(rwrace_exit);
 
 MODULE_LICENSE("GPL");
 

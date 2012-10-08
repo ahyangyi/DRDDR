@@ -11,10 +11,10 @@
 
 static struct task_struct *writer, *reader;
 
-int write_racer (void *vcurrent_cafe)
+int write_racer (void *vptr)
 {
-	int flavour = 0xab8acada;
-	volatile int *current_cafe = (volatile int *) vcurrent_cafe;
+	int generator = 0xab8acada;
+    volatile int *ptr = (volatile int *) vptr;
 	int i;
 
 	printk ("** WRITER ADDRESS: %016Lx. **\n", (0x12ll + ((long long) &&__write)));
@@ -22,29 +22,29 @@ int write_racer (void *vcurrent_cafe)
 
 	while(1)
 	{
-		for (i = 0; i < (unsigned int)(flavour) % 32; i ++)
+		for (i = 0; i < (unsigned int)(generator) % 32; i ++)
 		{
 			msleep(100);
 			if (kthread_should_stop()) goto ouch;
 		}
 
-		printk ("The current coffee becomes type %08x\n", flavour);
+		printk ("Write %08x\n", generator);
 
 __write:
-		*current_cafe = flavour;
+		*ptr = generator;
 
-		flavour = (flavour ^ 0xbabeface) * (flavour ^ 0xfadedcab);
+		generator = (generator ^ 0xbabeface) * (generator ^ 0xfadedcab);
 	}
 ouch:
-	printk (KERN_INFO "Welcome again!\n");
+	printk (KERN_INFO "Writer exits\n");
 	return 0;
 }
 
-int read_racer (void *vcurrent_cafe)
+int read_racer (void *vptr)
 {
-	volatile int *current_cafe = (volatile int *) vcurrent_cafe;
+	volatile int *ptr = (volatile int *) vptr;
 	int i;
-	int cafe_type;
+	int read_result;
 
     printk ("** WRITER ADDRESS: %016Lx. **\n", ((long long) &&__read));
 
@@ -57,24 +57,24 @@ int read_racer (void *vcurrent_cafe)
 		}
 
 __read:
-		cafe_type = *current_cafe;
+		read_result = *ptr;
 
-		printk ("The current coffee tastes like type %08x\n", cafe_type);
+		printk ("Read %08x\n", read_result);
 	}
 
 ouch2:
-	printk (KERN_INFO "Any more coffee for me to taste?\n");
+	printk (KERN_INFO "Reader exits\n");
 	return 0;
 }
 
 static int __init rwrace_init(void)
 {
-	static volatile int current_cafe = 0;
+	static volatile int ptr = 0;
 
-    printk ("** DATA ADDRESS %16Lx **\n", (int64_t)(&current_cafe));
+    printk ("** DATA ADDRESS %16Lx **\n", (int64_t)(&ptr));
 
-	writer = kthread_run(write_racer, (void *)&current_cafe,  "CAFE_MACHINE");
-	reader = kthread_run(read_racer, (void *)&current_cafe,  "CAFE_TESTER");
+	writer = kthread_run(write_racer, (void *)&ptr,  "WRITER");
+	reader = kthread_run(read_racer, (void *)&ptr,  "READER");
 
 	return 0;
 }
