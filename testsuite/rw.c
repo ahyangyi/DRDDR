@@ -46,7 +46,7 @@ int read_racer (void *vptr)
 	int i;
 	int read_result;
 
-    printk ("** WRITER ADDRESS: %016Lx. **\n", ((long long) &&__read));
+    printk ("** READER ADDRESS: %016Lx. **\n", ((long long) &&__read));
 
 	while(1)
 	{
