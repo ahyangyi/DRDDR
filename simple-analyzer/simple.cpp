@@ -90,7 +90,7 @@ bool isInstruction ()
     return true;
 }
 
-char* DangerousFunction[] =
+const char* DangerousFunction[] =
 {
     "copy_from_user",
     "copy_to_user",
@@ -99,12 +99,12 @@ char* DangerousFunction[] =
     "sys_select",
 };
 
-char* FrequentFunction[] =
+const char* FrequentFunction[] =
 {
     "get_page",
 };
 
-char* MemoryAccess[] =
+const char* MemoryAccess[] =
 {
     "mov",
     "add", "adc",
