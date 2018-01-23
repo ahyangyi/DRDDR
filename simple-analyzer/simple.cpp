@@ -170,7 +170,12 @@ void parse ()
                     sp = strstr(p, "sp");
                     bp = strstr(p, "bp");
 
-                    if ((sp == NULL || sp < q) && (bp == NULL || bp < q))
+                    /*
+                     * We want to trap at memory access instructions that operates on non-stack address.
+                     * A simple heuristic is used here that if any memory access is relative to %rbp or
+                     *   %rsp it is probably on the stack, and we refrain from them.
+                     */
+                    if ((sp == NULL || sp > q) && (bp == NULL || bp > q))
                     {
                         printf ("%016lx: %s\n", state.instr.address, state.instr.text);
                     }
